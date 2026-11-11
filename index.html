@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Le C' — Menu</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --noir:       #0d0d0d;
+    --charbon:    #161616;
+    --gris-fonce: #1f1f1f;
+    --gris-mid:   #2e2e2e;
+    --gris-bord:  #333333;
+    --or:         #c9a84c;
+    --or-clair:   #e2c97e;
+    --or-pale:    #f5e9c0;
+    --blanc:      #f5f0e8;
+    --gris-texte: #9a9a9a;
+    --rouge-alle: #c0392b;
+    --vert-vege:  #4caf50;
+    --bleu-poiss: #1a73c4;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--noir);
+    color: var(--blanc);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--charbon);
+    border-bottom: 1px solid var(--gris-bord);
+    padding: 32px 24px 24px;
+    text-align: center;
+    position: relative;
+  }
+
+  .logo-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px; height: 64px;
+    border: 1.5px solid var(--or);
+    border-radius: 50%;
+    margin-bottom: 12px;
+  }
+
+  .logo-mark span {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 26px;
+    color: var(--or);
+    letter-spacing: -1px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: clamp(28px, 6vw, 42px);
+    color: var(--blanc);
+    letter-spacing: 0.04em;
+  }
+
+  .header-sub {
+    font-size: 12px;
+    color: var(--gris-texte);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  .header-info {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .header-info span {
+    font-size: 12px;
+    color: var(--gris-texte);
+  }
+
+  .header-info span strong {
+    color: var(--or-clair);
+    font-weight: 500;
+  }
+
+  /* ── STICKY NAV ── */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--charbon);
+    border-bottom: 1px solid var(--gris-bord);
+    padding: 0 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    display: flex;
+    gap: 0;
+  }
+
+  .sticky-nav::-webkit-scrollbar { display: none; }
+
+  .nav-tab {
+    flex-shrink: 0;
+    padding: 14px 18px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--gris-texte);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+
+  .nav-tab:hover { color: var(--or-clair); }
+  .nav-tab.active { color: var(--or); border-bottom-color: var(--or); }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    background: var(--gris-fonce);
+    padding: 14px 20px;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-bottom: 1px solid var(--gris-bord);
+    align-items: center;
+  }
+
+  .filter-bar::-webkit-scrollbar { display: none; }
+
+  .filter-label {
+    font-size: 11px;
+    color: var(--gris-texte);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    margin-right: 4px;
+  }
+
+  .filter-chip {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 400;
+    cursor: pointer;
+    border: 1px solid var(--gris-bord);
+    background: transparent;
+    color: var(--gris-texte);
+    transition: all 0.2s;
+  }
+
+  .filter-chip:hover { border-color: var(--or); color: var(--or); }
+
+  .filter-chip.active {
+    background: var(--or);
+    border-color: var(--or);
+    color: var(--noir);
+    font-weight: 500;
+  }
+
+  .filter-chip.allergen-chip { border-color: #5a3030; color: #d4807a; }
+  .filter-chip.allergen-chip.active { background: var(--rouge-alle); border-color: var(--rouge-alle); color: #fff; }
+  .filter-chip.vege-chip { border-color: #2a4a2a; color: #7ecb7e; }
+  .filter-chip.vege-chip.active { background: var(--vert-vege); border-color: var(--vert-vege); color: #fff; }
+
+  /* ── SEARCH ── */
+  .search-wrap {
+    padding: 14px 20px;
+    background: var(--gris-fonce);
+    border-bottom: 1px solid var(--gris-bord);
+  }
+
+  .search-input {
+    width: 100%;
+    max-width: 400px;
+    background: var(--gris-mid);
+    border: 1px solid var(--gris-bord);
+    border-radius: 6px;
+    padding: 10px 16px 10px 38px;
+    font-size: 14px;
+    color: var(--blanc);
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239a9a9a' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 12px center;
+  }
+
+  .search-input::placeholder { color: var(--gris-texte); }
+  .search-input:focus { border-color: var(--or); }
+
+  /* ── MAIN CONTENT ── */
+  main { padding: 0 20px 60px; max-width: 900px; margin: 0 auto; }
+
+  /* ── SECTION ── */
+  .menu-section {
+    margin-top: 40px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--gris-bord);
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--or-clair);
+  }
+
+  .section-count {
+    font-size: 12px;
+    color: var(--gris-texte);
+  }
+
+  /* ── ITEM ── */
+  .menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--gris-bord);
+    gap: 16px;
+    transition: opacity 0.2s;
+  }
+
+  .menu-item.hidden { display: none; }
+
+  .item-body { flex: 1; min-width: 0; }
+
+  .item-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--blanc);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+
+  .item-desc {
+    font-size: 13px;
+    color: var(--gris-texte);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .item-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+  }
+
+  .tag-vege  { background: #1a2e1a; color: #7ecb7e; border: 1px solid #2a4a2a; }
+  .tag-poiss { background: #0e1e30; color: #6ab4f0; border: 1px solid #1a3a5c; }
+  .tag-viand { background: #2a1414; color: #e08080; border: 1px solid #4a2020; }
+  .tag-glut  { background: #2a2010; color: #d4a855; border: 1px solid #4a3a18; }
+  .tag-lacto { background: #102020; color: #60c0b0; border: 1px solid #1a3a35; }
+  .tag-noix  { background: #2a1a0a; color: #d4904a; border: 1px solid #4a2e14; }
+  .tag-spicy { background: #2a0e0e; color: #e06060; border: 1px solid #4a1a1a; }
+  .tag-halal { background: #0e2a14; color: #60c060; border: 1px solid #1a4a24; }
+
+  .item-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--or);
+    white-space: nowrap;
+    padding-top: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gris-texte);
+    display: none;
+  }
+
+  .empty-state.visible { display: block; }
+
+  .empty-state p { font-size: 14px; margin-top: 8px; }
+
+  /* ── LEGEND ── */
+  .legend {
+    margin: 40px 0 20px;
+    padding: 20px;
+    background: var(--gris-fonce);
+    border: 1px solid var(--gris-bord);
+    border-radius: 8px;
+  }
+
+  .legend-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--gris-texte);
+    margin-bottom: 12px;
+  }
+
+  .legend-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 32px 20px 40px;
+    border-top: 1px solid var(--gris-bord);
+    color: var(--gris-texte);
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  footer strong { color: var(--or-pale); }
+
+  /* ── BACK TO TOP ── */
+  .back-top {
+    position: fixed;
+    bottom: 24px;
+    right: 20px;
+    width: 40px; height: 40px;
+    background: var(--or);
+    color: var(--noir);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border: none;
+    z-index: 200;
+  }
+
+  .back-top.visible { opacity: 1; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .header-info { gap: 14px; }
+    .menu-item { flex-direction: column; gap: 8px; }
+    .item-price { align-self: flex-end; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark"><span>C'</span></div>
+  <h1>Le C'</h1>
+  <p class="header-sub">Restaurant · Bar · Lounge — Bonapriso, Douala</p>
+  <div class="header-info">
+    <span>📍 <strong>99 Rue Tokoto, Bonapriso</strong></span>
+    <span>🕐 <strong>Mar–Dim · 12h–15h · 19h–23h</strong></span>
+    <span>📞 <strong>+237 6 96 82 79 72</strong></span>
+  </div>
+</header>
+
+<nav class="sticky-nav" id="stickyNav">
+  <button class="nav-tab active" data-section="all">Tout le menu</button>
+  <button class="nav-tab" data-section="entrees">Entrées</button>
+  <button class="nav-tab" data-section="plats">Plats</button>
+  <button class="nav-tab" data-section="poissons">Poissons</button>
+  <button class="nav-tab" data-section="viandes">Viandes</button>
+  <button class="nav-tab" data-section="desserts">Desserts</button>
+  <button class="nav-tab" data-section="cocktails">Cocktails</button>
+  <button class="nav-tab" data-section="vins">Vins</button>
+  <button class="nav-tab" data-section="softs">Softs & Jus</button>
+</nav>
+
+<div class="filter-bar">
+  <span class="filter-label">Filtres</span>
+  <button class="filter-chip vege-chip" data-filter="vege">🌿 Végétarien</button>
+  <button class="filter-chip allergen-chip" data-filter="gluten">⚠ Sans gluten</button>
+  <button class="filter-chip allergen-chip" data-filter="lacto">🥛 Sans lactose</button>
+  <button class="filter-chip allergen-chip" data-filter="noix">🚫 Sans noix</button>
+  <button class="filter-chip" data-filter="spicy">🌶 Épicé</button>
+  <button class="filter-chip" data-filter="halal">☪ Halal</button>
+</div>
+
+<div class="search-wrap">
+  <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un plat, un ingrédient…" autocomplete="off">
+</div>
+
+<main id="mainContent">
+
+  <!-- ENTRÉES -->
+  <div class="menu-section" data-section="entrees" id="sec-entrees">
+    <div class="section-header">
+      <h2 class="section-title">Entrées</h2>
+      <span class="section-count" id="count-entrees"></span>
+    </div>
+
+    <div class="menu-item" data-tags="lacto" data-name="salade caesar au saumon fumé saumon anchois parmesan">
+      <div class="item-body">
+        <div class="item-name">Salade Caesar au saumon fumé</div>
+        <div class="item-desc">Romaine croquante, saumon fumé, anchois, croûtons maison, parmesan, sauce Caesar</div>
+        <div class="item-tags">
+          <span class="tag tag-poiss">🐟 Poisson</span>
+          <span class="tag tag-lacto">🥛 Contient lactose</span>
+        </div>
+      </div>
+      <div class="item-price">4 500 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="vege gluten lacto" data-name="velouté champignons sauvages crème truffe">
+      <div class="item-body">
+        <div class="item-name">Velouté de champignons sauvages</div>
+        <div class="item-desc">Crème de champignons des bois, huile de truffe, croûtons à l'ail, ciboulette fraîche</div>
+        <div class="item-tags">
+          <span class="tag tag-vege">🌿 Végétarien</span>
+          <span class="tag tag-glut">⚠ Gluten</span>
+          <span class="tag tag-lacto">🥛 Lactose</span>
+        </div>
+      </div>
+      <div class="item-price">3 500 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="gluten lacto" data-name="foie gras torchon brioche chutney figues">
+      <div class="item-body">
+        <div class="item-name">Foie gras torchon, brioche maison</div>
+        <div class="item-desc">Foie gras de canard mi-cuit, brioche toastée, chutney de figues et porto, fleur de sel</div>
+        <div class="item-tags">
+          <span class="tag tag-glut">⚠ Gluten</span>
+          <span class="tag tag-lacto">🥛 Lactose</span>
+        </div>
+      </div>
+      <div class="item-price">7 500 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="gluten lacto viande" data-name="escargots bourguignonne beurre ail persil">
+      <div class="item-body">
+        <div class="item-name">Escargots à la bourguignonne</div>
+        <div class="item-desc">6 escargots de Bourgogne, beurre persillé à l'ail et aux fines herbes, pain de campagne grillé</div>
+        <div class="item-tags">
+          <span class="tag tag-viand">🥩 Viande</span>
+          <span class="tag tag-glut">⚠ Gluten</span>
+          <span class="tag tag-lacto">🥛 Lactose</span>
+        </div>
+      </div>
+      <div class="item-price">5 000 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="gluten poisson" data-name="tartare thon avocat sésame sauce ponzu">
+      <div class="item-body">
+        <div class="item-name">Tartare de thon &amp; avocat</div>
+        <div class="item-desc">Thon frais coupé au couteau, avocat crémeux, sésame torréfié, sauce ponzu, chips wonton</div>
+        <div class="item-tags">
+          <span class="tag tag-poiss">🐟 Poisson</span>
+          <span class="tag tag-glut">⚠ Gluten</span>
+        </div>
+      </div>
+      <div class="item-price">5 500 XAF</div>
+    </div>
+
+  </div>
+
+  <!-- PLATS DU JOUR -->
+  <div class="menu-section" data-section="plats" id="sec-plats">
+    <div class="section-header">
+      <h2 class="section-title">Suggestions du Chef</h2>
+      <span class="section-count" id="count-plats"></span>
+    </div>
+
+    <div class="menu-item" data-tags="gluten lacto" data-name="magret canard cerise porto réduction balsamique purée truffée">
+      <div class="item-body">
+        <div class="item-name">Magret de canard, réduction cerise & porto</div>
+        <div class="item-desc">Magret rosé, jus corsé cerise-porto, purée de pommes de terre à la truffe, haricots verts fins</div>
+        <div class="item-tags">
+          <span class="tag tag-viand">🥩 Viande</span>
+          <span class="tag tag-lacto">🥛 Lactose</span>
+        </div>
+      </div>
+      <div class="item-price">14 500 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="gluten lacto" data-name="risotto parmesan champignons truffes crème">
+      <div class="item-body">
+        <div class="item-name">Risotto crémeux aux champignons &amp; truffe</div>
+        <div class="item-desc">Arborio mantecato, cèpes sautés, copeaux de parmesan 24 mois, huile de truffe noire</div>
+        <div class="item-tags">
+          <span class="tag tag-vege">🌿 Végétarien</span>
+          <span class="tag tag-glut">⚠ Gluten</span>
+          <span class="tag tag-lacto">🥛 Lactose</span>
+        </div>
+      </div>
+      <div class="item-price">11 000 XAF</div>
+    </div>
+
+  </div>
+
+  <!-- POISSONS -->
+  <div class="menu-section" data-section="poissons" id="sec-poissons">
+    <div class="section-header">
+      <h2 class="section-title">Poissons &amp; Fruits de mer</h2>
+      <span class="section-count" id="count-poissons"></span>
+    </div>
+
+    <div class="menu-item" data-tags="lacto poisson gluten" data-name="bar bretagne beurre blanc safran légumes croquants">
+      <div class="item-body">
+        <div class="item-name">Filet de bar, beurre blanc au safran</div>
+        <div class="item-desc">Bar de ligne poêlé, beurre blanc safran-coriandre, légumes croquants au wok, riz basmati</div>
+        <div class="item-tags">
+          <span class="tag tag-poiss">🐟 Poisson</span>
+          <span class="tag tag-lacto">🥛 Lactose</span>
+        </div>
+      </div>
+      <div class="item-price">16 000 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="poisson gluten lacto" data-name="crevettes gambas sautées ail beurre citron persillade">
+      <div class="item-body">
+        <div class="item-name">Gambas sautées à la persillade</div>
+        <div class="item-desc">Grosses gambas décortiquées, ail doré, beurre de citron, persil frais, pain de campagne</div>
+        <div class="item-tags">
+          <span class="tag tag-poiss">🐟 Crustacé</span>
+          <span class="tag tag-glut">⚠ Gluten</span>
+          <span class="tag tag-lacto">🥛 Lactose</span>
+        </div>
+      </div>
+      <div class="item-price">17 500 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="poisson" data-name="carpaccio saumon aneth huile olive câpres">
+      <div class="item-body">
+        <div class="item-name">Carpaccio de saumon à l'aneth</div>
+        <div class="item-desc">Saumon frais tranché fin, huile d'olive, citron confit, câpres, aneth, radis</div>
+        <div class="item-tags">
+          <span class="tag tag-poiss">🐟 Poisson</span>
+        </div>
+      </div>
+      <div class="item-price">12 500 XAF</div>
+    </div>
+
+  </div>
+
+  <!-- VIANDES -->
+  <div class="menu-section" data-section="viandes" id="sec-viandes">
+    <div class="section-header">
+      <h2 class="section-title">Viandes &amp; Grillades</h2>
+      <span class="section-count" id="count-viandes"></span>
+    </div>
+
+    <div class="menu-item" data-tags="lacto viande" data-name="entrecôte bœuf grillée sauce poivre frites maison">
+      <div class="item-body">
+        <div class="item-name">Entrecôte grillée, sauce au poivre</div>
+        <div class="item-desc">Entrecôte 300g, sauce poivre vert flambée, frites dorées maison, salade verte</div>
+        <div class="item-tags">
+          <span class="tag tag-viand">🥩 Bœuf</span>
+          <span class="tag tag-lacto">🥛 Lactose</span>
+        </div>
+      </div>
+      <div class="item-price">19 000 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="lacto viande halal" data-name="poulet rôti jus citron herbes légumes ratatouille">
+      <div class="item-body">
+        <div class="item-name">Poulet rôti au citron &amp; herbes fraîches</div>
+        <div class="item-desc">Demi-poulet rôti, jus au thym et citron, ratatouille provençale, pommes grenaille</div>
+        <div class="item-tags">
+          <span class="tag tag-viand">🥩 Volaille</span>
+          <span class="tag tag-lacto">🥛 Lactose</span>
+          <span class="tag tag-halal">☪ Halal</span>
+        </div>
+      </div>
+      <div class="item-price">13 500 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="lacto viande" data-name="filet mignon veau sauce morilles crème linguines">
+      <div class="item-body">
+        <div class="item-name">Filet mignon de veau, sauce morilles</div>
+        <div class="item-desc">Médaillon de veau rosé, crème de morilles, tagliatelles fraîches, copeaux de parmesan</div>
+        <div class="item-tags">
+          <span class="tag tag-viand">🥩 Veau</span>
+          <span class="tag tag-lacto">🥛 Lactose</span>
+          <span class="tag tag-glut">⚠ Gluten</span>
+        </div>
+      </div>
+      <div class="item-price">21 000 XAF</div>
+    </div>
+
+  </div>
+
+  <!-- DESSERTS -->
+  <div class="menu-section" data-section="desserts" id="sec-desserts">
+    <div class="section-header">
+      <h2 class="section-title">Desserts</h2>
+      <span class="section-count" id="count-desserts"></span>
+    </div>
+
+    <div class="menu-item" data-tags="lacto gluten" data-name="moelleux chocolat coeur coulant crème glacée vanille">
+      <div class="item-body">
+        <div class="item-name">Moelleux au chocolat cœur coulant</div>
+        <div class="item-desc">Chocolat noir 70%, cœur fondant, boule de glace vanille Bourbon, crumble amandes</div>
+        <div class="item-tags">
+          <span class="tag tag-lacto">🥛 Lactose</span>
+          <span class="tag tag-glut">⚠ Gluten</span>
+          <span class="tag tag-noix">🌰 Noix</span>
+        </div>
+      </div>
+      <div class="item-price">4 500 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="lacto gluten" data-name="crème brûlée vanille bourbon caramel">
+      <div class="item-body">
+        <div class="item-name">Crème brûlée vanille Bourbon</div>
+        <div class="item-desc">Crème onctueuse infusée à la vanille, caramel craquant flambé à table, langues de chat</div>
+        <div class="item-tags">
+          <span class="tag tag-lacto">🥛 Lactose</span>
+          <span class="tag tag-glut">⚠ Gluten</span>
+        </div>
+      </div>
+      <div class="item-price">3 800 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="lacto" data-name="assiette fromages affinés confiture pain">
+      <div class="item-body">
+        <div class="item-name">Plateau de fromages affinés</div>
+        <div class="item-desc">Sélection de 3 fromages français, confiture de cerises noires, noix, pain de seigle</div>
+        <div class="item-tags">
+          <span class="tag tag-lacto">🥛 Lactose</span>
+          <span class="tag tag-noix">🌰 Noix</span>
+        </div>
+      </div>
+      <div class="item-price">5 500 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="vege" data-name="sorbet mangue passion fruits exotiques frais">
+      <div class="item-body">
+        <div class="item-name">Sorbet mangue &amp; passion</div>
+        <div class="item-desc">Sorbet artisanal mangue fraîche, coulis fruits de la passion, menthe ciselée</div>
+        <div class="item-tags">
+          <span class="tag tag-vege">🌿 Vegan</span>
+        </div>
+      </div>
+      <div class="item-price">3 200 XAF</div>
+    </div>
+
+  </div>
+
+  <!-- COCKTAILS -->
+  <div class="menu-section" data-section="cocktails" id="sec-cocktails">
+    <div class="section-header">
+      <h2 class="section-title">Cocktails &amp; Bar</h2>
+      <span class="section-count" id="count-cocktails"></span>
+    </div>
+
+    <div class="menu-item" data-tags="" data-name="mojito rhum blanc menthe citron sucre">
+      <div class="item-body">
+        <div class="item-name">Mojito Classique</div>
+        <div class="item-desc">Rhum blanc Havana, menthe fraîche, citron vert, sucre de canne, eau gazeuse</div>
+        <div class="item-tags"></div>
+      </div>
+      <div class="item-price">4 000 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="" data-name="cosmopolitan vodka triple sec cranberry citron">
+      <div class="item-body">
+        <div class="item-name">Cosmopolitan</div>
+        <div class="item-desc">Vodka, Triple Sec, jus de cranberry, citron vert pressé, zeste d'orange</div>
+        <div class="item-tags"></div>
+      </div>
+      <div class="item-price">4 500 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="" data-name="aperol spritz prosecco orange">
+      <div class="item-body">
+        <div class="item-name">Aperol Spritz</div>
+        <div class="item-desc">Aperol, Prosecco frais, eau gazeuse, tranche d'orange</div>
+        <div class="item-tags"></div>
+      </div>
+      <div class="item-price">4 000 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="" data-name="old fashioned whisky bourbon angostura sucre orange">
+      <div class="item-body">
+        <div class="item-name">Old Fashioned</div>
+        <div class="item-desc">Bourbon Woodford Reserve, Angostura bitters, sucre, zeste d'orange, cerise</div>
+        <div class="item-tags"></div>
+      </div>
+      <div class="item-price">5 500 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="vege" data-name="cocktail sans alcool virgin mocktail menthe fruits">
+      <div class="item-body">
+        <div class="item-name">Virgin Passion — sans alcool</div>
+        <div class="item-desc">Jus de passion, gingembre frais, citron vert, sirop de menthe, eau pétillante</div>
+        <div class="item-tags">
+          <span class="tag tag-vege">🌿 Sans alcool</span>
+        </div>
+      </div>
+      <div class="item-price">2 800 XAF</div>
+    </div>
+
+  </div>
+
+  <!-- VINS -->
+  <div class="menu-section" data-section="vins" id="sec-vins">
+    <div class="section-header">
+      <h2 class="section-title">Carte des Vins</h2>
+      <span class="section-count" id="count-vins"></span>
+    </div>
+
+    <div class="menu-item" data-tags="" data-name="bordeaux rouge château merlot cabernet">
+      <div class="item-body">
+        <div class="item-name">Château Haut-Marbuzet — Saint-Estèphe</div>
+        <div class="item-desc">Rouge · Bordeaux · Notes de fruits noirs, cèdre, épices douces · Accord : viandes rouges</div>
+        <div class="item-tags"></div>
+      </div>
+      <div class="item-price">38 000 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="" data-name="chablis blanc chardonnay minéral poissons fruits mer">
+      <div class="item-body">
+        <div class="item-name">Chablis 1er Cru — Montée de Tonnerre</div>
+        <div class="item-desc">Blanc · Bourgogne · Minéral, iodé, citronné · Accord idéal : poissons, fruits de mer</div>
+        <div class="item-tags"></div>
+      </div>
+      <div class="item-price">42 000 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="" data-name="rosé provence grenache cinsault frais léger été">
+      <div class="item-body">
+        <div class="item-name">Château Minuty — Côtes de Provence Rosé</div>
+        <div class="item-desc">Rosé · Provence · Frais et délicat, notes de pêche et agrumes · Accord : entrées, apéritif</div>
+        <div class="item-tags"></div>
+      </div>
+      <div class="item-price">28 000 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="" data-name="champagne brut moët chandon apéritif célébration">
+      <div class="item-body">
+        <div class="item-name">Moët &amp; Chandon Brut Imperial</div>
+        <div class="item-desc">Champagne · Blanc de blancs, bulles fines, notes briochées · Idéal pour célébrer</div>
+        <div class="item-tags"></div>
+      </div>
+      <div class="item-price">85 000 XAF</div>
+    </div>
+
+  </div>
+
+  <!-- SOFTS -->
+  <div class="menu-section" data-section="softs" id="sec-softs">
+    <div class="section-header">
+      <h2 class="section-title">Softs, Jus &amp; Infusions</h2>
+      <span class="section-count" id="count-softs"></span>
+    </div>
+
+    <div class="menu-item" data-tags="vege" data-name="eau minérale plate pétillante evian perrier">
+      <div class="item-body">
+        <div class="item-name">Eau minérale (plate ou pétillante)</div>
+        <div class="item-desc">Évian 50cl / Perrier 33cl</div>
+        <div class="item-tags"><span class="tag tag-vege">🌿 Naturel</span></div>
+      </div>
+      <div class="item-price">1 500 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="vege" data-name="jus frais orange citron ananas mangue bissap">
+      <div class="item-body">
+        <div class="item-name">Jus de fruits frais pressés</div>
+        <div class="item-desc">Orange · Citron · Ananas · Mangue · Bissap — préparés à la commande</div>
+        <div class="item-tags"><span class="tag tag-vege">🌿 Frais</span></div>
+      </div>
+      <div class="item-price">2 500 XAF</div>
+    </div>
+
+    <div class="menu-item" data-tags="vege" data-name="café expresso allongé thé infusion tisane">
+      <div class="item-body">
+        <div class="item-name">Café &amp; Infusions</div>
+        <div class="item-desc">Espresso · Allongé · Cappuccino · Thé darjeeling · Infusions maison (citron-gingembre, menthe)</div>
+        <div class="item-tags"><span class="tag tag-vege">🌿 Chaud</span></div>
+      </div>
+      <div class="item-price">1 500 — 2 500 XAF</div>
+    </div>
+
+  </div>
+
+  <!-- LÉGENDE -->
+  <div class="legend">
+    <div class="legend-title">Légende allergènes &amp; régimes</div>
+    <div class="legend-grid">
+      <span class="tag tag-vege">🌿 Végétarien / Vegan</span>
+      <span class="tag tag-poiss">🐟 Poisson / Crustacé</span>
+      <span class="tag tag-viand">🥩 Viande</span>
+      <span class="tag tag-glut">⚠ Contient gluten</span>
+      <span class="tag tag-lacto">🥛 Contient lactose</span>
+      <span class="tag tag-noix">🌰 Contient noix</span>
+      <span class="tag tag-spicy">🌶 Épicé</span>
+      <span class="tag tag-halal">☪ Halal</span>
+    </div>
+    <p style="margin-top:14px;font-size:12px;color:var(--gris-texte);">En cas d'allergie alimentaire sévère, merci de le signaler à votre serveur. Carte susceptible d'évoluer selon la saison et la disponibilité des produits.</p>
+  </div>
+
+  <div class="empty-state" id="emptyState">
+    <div style="font-size:40px;">🍽</div>
+    <p>Aucun plat ne correspond à votre recherche ou à vos filtres.</p>
+  </div>
+
+</main>
+
+<footer>
+  <div class="logo-mark" style="margin:0 auto 12px;width:44px;height:44px;">
+    <span style="font-size:18px;">C'</span>
+  </div>
+  <strong>Le C' Restaurant</strong><br>
+  99 Rue Tokoto, Bonapriso · Douala, Cameroun<br>
+  Mardi au Dimanche · 12h–15h · 19h–23h<br>
+  <a href="tel:+237696827972" style="color:var(--or);text-decoration:none;">+237 6 96 82 79 72</a> · 
+  <a href="mailto:info@restaurant-c.com" style="color:var(--or);text-decoration:none;">info@restaurant-c.com</a><br><br>
+  <span style="color:var(--gris-bord);">Les prix sont indiqués en Francs CFA (XAF) et peuvent varier.</span>
+</footer>
+
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  // ── DATA ──────────────────────────────────────────────────────────
+  const sections = {
+    'entrees':   document.getElementById('sec-entrees'),
+    'plats':     document.getElementById('sec-plats'),
+    'poissons':  document.getElementById('sec-poissons'),
+    'viandes':   document.getElementById('sec-viandes'),
+    'desserts':  document.getElementById('sec-desserts'),
+    'cocktails': document.getElementById('sec-cocktails'),
+    'vins':      document.getElementById('sec-vins'),
+    'softs':     document.getElementById('sec-softs'),
+  };
+
+  let activeSection = 'all';
+  let activeFilters = new Set();
+  let searchQuery = '';
+
+  // ── NAV TABS ─────────────────────────────────────────────────────
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeSection = tab.dataset.section;
+      applyFilters();
+      if (activeSection !== 'all') {
+        const el = document.getElementById('sec-' + activeSection);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // ── FILTER CHIPS ─────────────────────────────────────────────────
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const f = chip.dataset.filter;
+      if (activeFilters.has(f)) {
+        activeFilters.delete(f);
+        chip.classList.remove('active');
+      } else {
+        activeFilters.add(f);
+        chip.classList.add('active');
+      }
+      applyFilters();
+    });
+  });
+
+  // ── SEARCH ───────────────────────────────────────────────────────
+  document.getElementById('searchInput').addEventListener('input', e => {
+    searchQuery = e.target.value.toLowerCase().trim();
+    applyFilters();
+  });
+
+  // ── APPLY FILTERS ────────────────────────────────────────────────
+  function applyFilters() {
+    let totalVisible = 0;
+
+    Object.entries(sections).forEach(([key, secEl]) => {
+      // section visibility
+      const showSection = activeSection === 'all' || activeSection === key;
+      secEl.style.display = showSection ? '' : 'none';
+      if (!showSection) return;
+
+      let secVisible = 0;
+      secEl.querySelectorAll('.menu-item').forEach(item => {
+        const tags = (item.dataset.tags || '').split(' ').filter(Boolean);
+        const name = (item.dataset.name || '').toLowerCase();
+
+        // filter logic
+        let filterOk = true;
+        if (activeFilters.size > 0) {
+          filterOk = [...activeFilters].every(f => tags.includes(f));
+        }
+
+        // search
+        const searchOk = !searchQuery || name.includes(searchQuery) ||
+          item.querySelector('.item-desc')?.textContent.toLowerCase().includes(searchQuery);
+
+        if (filterOk && searchOk) {
+          item.classList.remove('hidden');
+          secVisible++;
+          totalVisible++;
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+
+      // update count
+      const countEl = secEl.querySelector('.section-count');
+      if (countEl) {
+        const total = secEl.querySelectorAll('.menu-item').length;
+        countEl.textContent = secVisible < total
+          ? `${secVisible} / ${total} résultat${secVisible > 1 ? 's' : ''}`
+          : `${total} plat${total > 1 ? 's' : ''}`;
+      }
+
+      // hide section if no results
+      secEl.style.display = (showSection && secVisible === 0 && (activeFilters.size > 0 || searchQuery))
+        ? 'none' : (showSection ? '' : 'none');
+    });
+
+    // empty state
+    document.getElementById('emptyState').classList.toggle('visible', totalVisible === 0);
+  }
+
+  // ── BACK TO TOP ──────────────────────────────────────────────────
+  const backTop = document.getElementById('backTop');
+  window.addEventListener('scroll', () => {
+    backTop.classList.toggle('visible', window.scrollY > 300);
+  });
+
+  // ── INIT ─────────────────────────────────────────────────────────
+  applyFilters();
+</script>
+</body>
+</html>
